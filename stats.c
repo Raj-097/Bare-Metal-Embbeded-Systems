@@ -9,13 +9,13 @@
  *
  *****************************************************************************/
 /**
- * @file <Add File Name> 
- * @brief <Add Brief Description Here >
+ * @file stats.c 
+ * @brief simple statistics calculations of an array of unsigned char type numbers
  *
- * <Add Extended Description Here>
+ * The main function gets the unsorted array of unsigned char type numbers  as its paramter,  which calls different functions for sorting of the array,  calculations of mean, median, maximum value, minimum value, and for printing the results.
  *
- * @author <Add FirsName LastName>
- * @date <Add date >
+ * @author Rajkumar Saravanakumar
+ * @date 12/11/2024
  *
  */
 
@@ -40,4 +40,24 @@ void main() {
 
 }
 
-/* Add other Implementation File Code Here */
+void print_statistics(unsigned char* array, unsigned int length) {
+}
+
+void print_array(unsigned char* array, unsigned int length) {
+}
+
+unsigned char find_median(unsigned char* array, unsigned int length) {
+}
+
+unsigned char find_median(unsigned char* array, unsigned int length) {
+}
+
+unsigned char find_maximum(unsigned char* array, unsigned int length) {
+}
+
+unsigned char find_minimum(unsigned char* array, unsigned int length) {
+}
+
+void sort_array(unsigned char* array, unsigned int length) {
+}
+
