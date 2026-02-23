@@ -1,0 +1,92 @@
+#******************************************************************************
+# Copyright (C) 2017 by Alex Fosdick - University of Colorado
+#
+# Redistribution, modification or use of this software in source or binary
+# forms is permitted as long as the files maintain this copyright. Users are 
+# permitted to modify this and use it to learn about the field of embedded
+# software. Alex Fosdick and the University of Colorado are not liable for any
+# misuse of this material. 
+#
+#*****************************************************************************
+
+#------------------------------------------------------------------------------
+# <Put a Description Here>
+#
+# Use: make [TARGET] [PLATFORM-OVERRIDES]
+#
+# Build Targets:
+#      MSP432 and HOST
+#
+# Platform Overrides:
+#      MSP432 and HOST
+#
+#------------------------------------------------------------------------------
+include sources.mk
+
+# Platform Overrides
+PLATFORM ?= HOST
+
+# Common compiler flags
+CFLAGS = -wall \
+         -werror \
+         -g \
+         -O0 \
+         -std=c99
+
+CPPFLAGS = -I./include -D$(PLATFORM)
+
+# Architecture specific flags
+LINKER_FILE = msp432p401r.ld
+CPU = cortex-m4
+ARCH = -mthumb
+SPECS = --specs=nosys.specs
+
+
+# Object files
+MSP432_OBJS = memory.o interrupts_msp432p401r_gcc.o startup_msp432p401r_gcc.o system_msp432p401r.o
+HOST_OBJS = main.o
+
+ifeq ($(PLATFORM), MSP432)
+    CC = arm-none-eabi-gcc
+    LD = arm-none-eabi-ld
+    CFLAGS += -DMSP432 -mcpu=cortex-m4 -mthumb -g
+    OBJS = MSP432_OBJS
+    LDFLAGS = -T $(LINKER_FILE) -Xlinker -Map=c1m2.map  # Generate map file
+    
+else ifeq ($(PLATFORM), HOST)
+    CC = gcc
+    LD = gcc
+    CFLAGS += -DHOST
+    LDFLAGS = -lm -Xlinker -Map=c1m2.map  # Generate map file
+    OBJS = HOST_OBJS
+endif
+
+.PHONY: compile-all build clean preprocess assembly
+
+# Generate .i files (preprocessed output)
+%.i: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -E $< -o $@
+
+# Generate .asm files (assembly output)
+%.asm: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -S $< -o $@
+
+# Compile all object files (without linking)
+compile-all: $(OBJS)
+        @echo "Compiling all object files..."
+# Generate object files (.o)
+%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	# Generate dependency files
+	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $*.d
+
+# Build: link object files into an executable
+build: $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) -o c1m2
+
+# Clean: Remove all generated files (.o, .i, .asm, .map, .out, etc.)
+clean:
+	rm -f *.o *.i *.asm *.map *.out c1m2
+
+# Including the dependency files in the makefile
+-include $(OBJS:.o=.d)
