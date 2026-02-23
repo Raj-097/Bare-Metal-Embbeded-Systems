@@ -1,1 +1,4 @@
-/* Add Author and Project Details here */
+Author : Rajkumar Saravanakumar
+Project : Sorting an array of unsigned bytes and calculating basic statistics - mean, median, maximum, and minimum using C.
+
+# Introduction-to-Embbeded-Systems-
