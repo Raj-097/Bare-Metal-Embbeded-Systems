@@ -26,20 +26,22 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base) {
     uint8_t *start = ptr;  // Pointer to the beginning of the string
     int is_negative = 0;   // To track if the number is negative
     uint8_t length = 0;    // Length of the resulting string
-
+    uint32_t udata;
     // Handle negative numbers for base 10
     if (data < 0 && base == 10) {
         is_negative = 1;
         data = -data;
+        udata = data;
     }
+    else udata = (uint32_t)data;
 
     // Convert the number to the specified base
     do {
-        int remainder = data % base;
+        int remainder = udata % base;
         *ptr++ = (remainder > 9) ? (remainder - 10 + 'A') : (remainder + '0'); // Convert to ASCII
         length++;
-        data /= base;
-    } while (data != 0);
+        udata /= base;
+    } while (udata != 0);
 
     // Add the negative sign if necessary
     if (is_negative) {
@@ -70,7 +72,7 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base) {
     }
 
     bool is_negative = false;
-    int32_t result = 0;
+    uint32_t result = 0;
     uint8_t *current = ptr;
 
     // Handle optional '+' or '-' sign
@@ -112,7 +114,7 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base) {
         // Accumulate result
         result = result * base + value;
     }
-
-    return is_negative ? -result : result;
+    int32_t res = (int32_t)result;
+    return is_negative ? -res : res;
 }
 
