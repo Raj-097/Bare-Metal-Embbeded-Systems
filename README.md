@@ -1,5 +1,11 @@
 # Bare-Metal Embedded Systems Coursework Project
 
+## Author
+
+Rajkumar Saravanakumar
+
+## Overview
+
 This repository contains source code developed as part of an embedded systems course focused on low-level C programming, memory manipulation, build systems, and cross-compilation for embedded targets.
 
 The application assignments were developed and tested on the host platform, with Makefile support for both native compilation and MSP432 cross-compilation.
