@@ -8,18 +8,19 @@
  * misuse of this material. 
  *
  *****************************************************************************/
-/**
+
+ /**
  * @file stats.c 
- * @brief simple statistics calculations of an array of unsigned char type numbers
+ * @brief Statistics calculations and sorting of an array of 8 bit numbers
  *
- * The main function gets the unsorted array of unsigned char type numbers  as its paramter,  which calls different functions for sorting of the array,  calculations of mean, median, maximum value, minimum value, and for printing the results.
+ * The main function gets the unsorted array of unsigned char type numbers  
+ * as its paramter, which calls different functions for sorting of the array,  
+ * calculations of mean, median, maximum value, and minimum value, and for 
+ * printing the results.
  *
  * @author Rajkumar Saravanakumar
- * @date 12/11/2024
- *
+ * 
  */
-
-
 
 #include <stdio.h>
 #include "stats.h"
@@ -48,8 +49,6 @@ void main() {
 
    // Print statistics
    print_statistics(test, length);
-
-
 }
 
 void print_statistics(unsigned char* array, unsigned int length) {
@@ -58,53 +57,66 @@ void print_statistics(unsigned char* array, unsigned int length) {
     printf("Maximum: %u\n", find_maximum(array, length));
     printf("Mean: %u\n", find_mean(array, length));
     printf("Median: %u\n", find_median(array, length));
-
 }
 
 void print_array(unsigned char* array, unsigned int length) {
+    // Traverse and print with spacing
     for (unsigned int i = 0; i < length; i++) {
         printf("%u ", array[i]);
     }
-    printf("\n");
+
+    printf("\n");  // print new line
 }
 
 unsigned char find_median(unsigned char* array, unsigned int length) {
+    // Even number of elements -> return average of center values
     if (length % 2 == 0) {
         return (array[length / 2 - 1] + array[length / 2]) / 2;
-    } else {
+    } 
+    else {
         return array[length / 2];
     }
 }
 
 unsigned char find_mean(unsigned char* array, unsigned int length) {
     unsigned int sum = 0;
+
+    // Compute sum and divide by total number of elements
     for (unsigned int i = 0; i < length; i++) {
         sum += array[i];
     }
+
     return sum / length;
 }
 
 unsigned char find_maximum(unsigned char* array, unsigned int length) {
     unsigned char max = array[0];
+
+    // Traverse the array and store minimum value in variable max
     for (unsigned int i = 1; i < length; i++) {
         if (array[i] > max) {
             max = array[i];
         }
     }
+
     return max;
 }
 
 unsigned char find_minimum(unsigned char* array, unsigned int length) {
     unsigned char min = array[0];
+
+    // Traverse the array and store minimum value in variable min
     for (unsigned int i = 1; i < length; i++) {
         if (array[i] < min) {
             min = array[i];
         }
     }
+
     return min;
 }
 
 void sort_array(unsigned char* array, unsigned int length) {
+    // Bubble sort to sort in descendig order
     for (unsigned int i = 0; i < length - 1; i++) {
         for (unsigned int j = 0; j < length - i - 1; j++) {
             if (array[j] < array[j + 1]) {

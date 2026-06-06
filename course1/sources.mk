@@ -9,15 +9,28 @@
 #
 #*****************************************************************************
 
+#------------------------------------------------------------------------------
+# @file    sources.mk
+# @brief   Source files and include directories used by the build system.
+#
+# @author  Rajkumar Saravanakumar
+#------------------------------------------------------------------------------
+
 # Source files in the project
-SOURCES = src/interrupts_msp432p401r_gcc.c \
-          src/main.c \
-          src/memory.c \
-          src/startup_msp432p401r_gcc.c \
-          src/system_msp432p401r.c \
-	  src/data.c \
-	  src/course1.c \
-	  src/stats.c
+MSP432_SOURCES = src/interrupts_msp432p401r_gcc.c \
+                 src/main.c \
+                 src/memory.c \
+                 src/startup_msp432p401r_gcc.c \
+                 src/system_msp432p401r.c \
+	             src/data.c \
+	             src/course1.c \
+	             src/stats.c
+
+HOST_SOURCES = src/stats.c \
+               src/data.c \
+               src/memory.c \
+               src/course1.c \
+               src/main.c
 
 # Include paths for header files
 INCLUDES = -Iinclude/CMSIS \

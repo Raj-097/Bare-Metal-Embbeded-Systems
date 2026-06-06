@@ -1,0 +1,11 @@
+.stats.h.swp
+*.swp
+*.o
+*.out
+Makefile~
+/C1M2-Saravanakumar/src/Makefile~
+/C1M2-Saravanakumar/src/Makefilz~
+/C1M2-Saravanakumar/src/Makefile~
+/C1M2-Saravanakumar/src/Makefily~
+*.swo
+.vscode/

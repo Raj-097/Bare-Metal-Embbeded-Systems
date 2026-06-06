@@ -8,17 +8,18 @@
  * misuse of this material. 
  *
  *****************************************************************************/
-/**
+
+ /**
  * @file memory.h
- * @brief Abstraction of memory read and write operations
- *
- * This header file provides an abstraction of reading and
- * writing to memory via function calls. 
- *
+ * @brief Abstraction of expanded memory read and write operations
+ * 
+ * This header file provides api to expanded abstraction of reading and
+ * writing to memory. 
+ * 
  * @author Alex Fosdick
- * @date April 1 2017
- *
+ * @author Rajkumar Saravanakumar
  */
+
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
@@ -26,10 +27,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-
 /**
  * @brief Sets a value of a data array 
- *
  *
  * Given a pointer to a char data set, this will set a provided
  * index into that data set to the value provided.

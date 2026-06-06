@@ -10,20 +10,37 @@
 #*****************************************************************************
 
 #------------------------------------------------------------------------------
-# <Put a Description Here>
+# @file    Makefile
+# @brief   Portable build system for HOST and MSP432 platforms.
+#
+# Supports object generation, preprocessing, assembly generation,
+# dependency generation, executable creation, map file generation,
+# and code size reporting for Host and MSP432 target platforms.
+#
+# @author  Rajkumar Saravanakumar
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# Makefile to compile C files at host and MSP432 platforms
 #
 # Use: make [TARGET] [PLATFORM-OVERRIDES]
 #
 # Build Targets:
-#      MSP432 and HOST
+#      build        - Build executable and display size information using size
+#      compile-all  - Compile source files into object files without linking
+#      preprocess   - Generate preprocessed source files (.i)
+#      assembly     - Generate assembly files (.asm)
+#      clean        - Remove generated files
 #
 # Platform Overrides:
-#      MSP432 and HOST
+#      HOST         - Build for host machine using GCC
+#      MSP432       - Cross-compile using arm-none-eabi-gcc
 #
 #------------------------------------------------------------------------------
+
 include sources.mk
 
-# Platform Overrides
+# Default platform
 PLATFORM ?= HOST
 
 # Common compiler flags
@@ -33,7 +50,13 @@ CFLAGS = -Wall \
          -O0 \
          -std=c99
 
-CPPFLAGS = $(INCLUDES) -D$(PLATFORM)
+# Preprocessor flags
+
+# Include directories
+CPPFLAGS = $(INCLUDES)
+
+# Define target platform macro
+CPPFLAGS += -D$(PLATFORM)
 
 # Architecture specific flags
 LINKER_FILE = msp432p401r.lds
@@ -41,18 +64,27 @@ CPU = cortex-m4
 ARCH = mthumb
 SPECS = --specs=nosys.specs
 
-
 # Object files
-MSP432_OBJS = main.o memory.o interrupts_msp432p401r_gcc.o startup_msp432p401r_gcc.o system_msp432p401r.o
-HOST_OBJS = main.o memory.o
+MSP432_OBJS = $(MSP432_SOURCES:.c=.o)
+HOST_OBJS = $(HOST_SOURCES:.c=.o)
 
-#OBJS ?= $(SRC:.c=.o)
+# Preprocessed files
+MSP432_PPFILES = $(MSP432_SOURCES:.c=.i)
+HOST_PPFILES = $(HOST_SOURCES:.c=.i)
 
+# Assembly Files
+MSP432_ASMFILES = $(MSP432_SOURCES:.c=.asm)
+HOST_ASMFILES = $(HOST_SOURCES:.c=.asm)
+
+# Platform selection
 ifeq ($(PLATFORM), MSP432)
     CC = arm-none-eabi-gcc
     LD = arm-none-eabi-ld
     CFLAGS += -mcpu=$(CPU) -$(ARCH) -march=armv7e-m -mfpu=fpv4-sp-d16
     OBJS = $(MSP432_OBJS)
+    PPFILES = $(MSP432_PPFILES)
+    ASMFILES = $(MSP432_ASMFILES)
+    SIZE_TOOL = arm-none-eabi-size
     LDFLAGS = -T../$(LINKER_FILE) -Xlinker -Map=c1m2.map $(SPECS) 
     
 else ifeq ($(PLATFORM), HOST)
@@ -60,9 +92,27 @@ else ifeq ($(PLATFORM), HOST)
     LD = gcc
     LDFLAGS = -lm -Xlinker -Map=c1m2.map  
     OBJS = $(HOST_OBJS)
+    PPFILES = $(HOST_PPFILES)
+    ASMFILES = $(HOST_ASMFILES)
+    SIZE_TOOL = size
 endif
 
-.PHONY: compile-all build clean preprocess assembly
+# Makefile target names
+.PHONY: build compile-all preprocess assembly clean
+
+# Build: link object files into an executable and run size tool
+build: $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) -o c1m2.out
+	$(SIZE_TOOL) c1m2.out
+
+# Preprocess: Generate preprocessed files (.i)
+preprocess: $(PPFILES)
+
+# Assembly: Generate assembly files (.asm)
+assembly: $(ASMFILES)
+
+# Compile source files into object files (.o) without linking
+compile-all: $(OBJS)
 
 # Generate .i files (preprocessed output)
 %.i: %.c
@@ -72,9 +122,6 @@ endif
 %.asm: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -S $< -o $@
 
-# Compile all object files (without linking)
-compile-all: $(OBJS)
-	@echo "Compiling all object files..."
 # Generating object files
 interrupts_msp432p401r_gcc.o: interrupts_msp432p401r_gcc.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -mgeneral-regs-only -c $< -o $@
@@ -85,13 +132,9 @@ interrupts_msp432p401r_gcc.o: interrupts_msp432p401r_gcc.c
 	# Generate dependency files
 	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $< > $*.d
 
-# Build: link object files into an executable
-build: $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) -o c1m2
-
 # Clean: Remove all generated files (.o, .i, .asm, .map, .out, etc.)
 clean:
-	rm -f *.o *.i *.asm *.map *.out *.d c1m2
+	rm -f *.o *.i *.asm *.map *.out *.d c1m2.out
 
 # Including the dependency files in the makefile
 -include $(OBJS:.o=.d)
